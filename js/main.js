@@ -38,7 +38,7 @@ const posts = [
         "media": "https://unsplash.it/600/400?image=24",
         "author": {
             "name": "Luca Formicola",
-            "image": "https://unsplash.it/300/300?image=20"/*null*/
+            "image": null
         },
         "likes": 56,
         "created": "2021-04-03"
@@ -60,16 +60,18 @@ const posts = [
 const container = document.querySelector('#container');
 for (let object of posts){
     const post = addElementClassHTML('div','post',container);
+    const date = object.created.split('-').reverse().join('/');
+    
     post.innerHTML = 
     `
     <div class="post__header">
         <div class="post-meta">                    
-            <div class="post-meta__icon">
+            <div class="post-meta__icon" id="small-image-${object.id}">
                 <img class="profile-pic" src="${object.author.image}" alt="${object.author.name}">                    
             </div>
             <div class="post-meta__data">
                 <div class="post-meta__author">${object.author.name}</div>
-                <div class="post-meta__time">4 mesi fa</div>
+                <div class="post-meta__time">${date}</div>
             </div>                    
         </div>
     </div>
@@ -91,9 +93,20 @@ for (let object of posts){
         </div> 
     </div>    
     `
+    //controllo sugli oggetti senza immagine di profilo
+    if(!object.author.image){
+        const myDivImage = document.querySelector(`#small-image-${object.id}`);
+        //divido in nome e cognome
+        const arrayName = object.author.name.split(' ');
+        //prendo le iniziali e le printo a schermo
+        const initials = `${arrayName[0][0]} ${arrayName[1][0]}`;
+        myDivImage.innerHTML = initials;
+        myDivImage.classList.add('my-profile-image');
+    }
 }
 
 const btns = document.querySelectorAll('.js-like-button');
+let likeArray = [];
 
 for(let element of btns){
     element.addEventListener('click',handleClick);
@@ -101,18 +114,25 @@ for(let element of btns){
 
 
 function handleClick(){
+    //seleziono il tag <b> corrrispettivo al bottone che premo
     const numbOfLikes = document.querySelector(`#like-counter-${this.dataset.postid}`);
-    console.log(numbOfLikes)
     if(!this.classList.contains('like-button--liked')){
         this.classList.add('like-button--liked');
+        //incremento il contatore dei like
         let numb = parseInt(numbOfLikes.textContent);
         numb++;
-        numbOfLikes.textContent = numb
+        numbOfLikes.textContent = numb;
+        //aggiungo l'id nella lista dei like premuti
+        likeArray.push(this.dataset.postid);
     }else{
         this.classList.remove('like-button--liked');
+        //decremento il contatore
         let numb = parseInt(numbOfLikes.textContent);
         numb--;
-        numbOfLikes.textContent = numb
+        numbOfLikes.textContent = numb;
+        const index = likeArray.indexOf(this.dataset.postid);
+        //tolgo l'id nella lista dei like premuti
+        likeArray.splice(index,1);
     }
-    
+    console.log(likeArray)
 }
