@@ -100,8 +100,8 @@ for (let object of posts){
         const arrayName = object.author.name.split(' ');
         //prendo le iniziali e le printo a schermo
         const initials = `${arrayName[0][0]} ${arrayName[1][0]}`;
-        myDivImage.innerHTML = initials;
-        myDivImage.classList.add('my-profile-image');
+        myDivImage.innerHTML = `<span>${initials}</span>`;
+        myDivImage.classList.add('profile-pic-default');
     }
 }
 
